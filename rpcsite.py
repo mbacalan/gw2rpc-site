@@ -5,7 +5,7 @@ from flask import Flask, abort, jsonify, render_template, send_file
 
 app = Flask(__name__)
 
-CLIENT_VERSION = 2.11
+CLIENT_VERSION = 2.2
 
 RANDOM_IMAGE_POOL = os.listdir("static/img/showcases/")
 
@@ -1008,7 +1008,8 @@ registry_dict_v2 = {
         1341,
         1344,
         1346,
-        1351
+        1351,
+        1370
     ]
 }
 
