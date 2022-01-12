@@ -1,7 +1,7 @@
 from random import choice
 import os
 
-from flask import Flask, abort, jsonify, render_template, send_file
+from flask import Flask, abort, jsonify, render_template, send_file, request
 
 app = Flask(__name__)
 
@@ -871,6 +871,28 @@ registry_dict_v2 = {
                 "type": "boss"
             }
         ],
+        "1357": [
+            {
+                "coord": [
+                    23017,
+                    2786
+                ],
+                "id": "whisper_of_jormag",
+                "radius": 50,
+                "type": "boss"
+            }
+        ],
+        "1359": [
+            {
+                "coord": [
+                    23017,
+                    2786
+                ],
+                "id": "whisper_of_jormag",
+                "radius": 50,
+                "type": "boss"
+            }
+        ],
         "1351": [
             {
                 "coord": [
@@ -915,7 +937,27 @@ registry_dict_v2 = {
         "1232": "gh_haven",
         "1224": "gh_haven",
         "1243": "gh_haven",
-        "1250": "gh_haven"
+        "1250": "gh_haven",
+        "1331": "strike_shiverpeaks_pass",
+        "1332": "strike_shiverpeaks_pass",
+        "1339": "strike_sanctum_arena",
+        "1340": "strike_sanctum_arena",
+        "1341": "strike_sanctum_arena",
+        "1344": "strike_sanctum_arena",
+        "1346": "strike_sanctum_arena",
+        "1357": "strike_jormag",
+        "1359": "strike_jormag"
+    },
+    "mounts": {
+        1: "jackal",
+        2: "griffon",
+        3: "springer",
+        4: "skimmer",
+        5: "raptor",
+        6: "roller beetle",
+        7: "warclaw",
+        8: "skyscale",
+        10: "siege turtle"
     },
     "valid": [
         15,
@@ -1000,16 +1042,20 @@ registry_dict_v2 = {
         1301,
         1303,
         1306,
+        1317,
         1323,
+        1330,
         1331,
         1332,
         1339,
         1340,
         1341,
+        1343,
         1344,
         1346,
         1351,
-        1370
+        1370,
+        1371
     ]
 }
 
@@ -1048,6 +1094,11 @@ def home():
     image_path = "static/img/showcases/" + choice(RANDOM_IMAGE_POOL)
     return render_template('index.html', random_image=image_path)
 
+@app.route('/copy-paste')
+def copy_paste():
+    chat_code = request.args.get('chat_code', type = str)
+    name = request.args.get('name', type = str)
+    return render_template('copy_paste.html', chat_code=chat_code, name=name)
 
 @app.route('/download/latest')
 def download_latest():
@@ -1060,3 +1111,4 @@ def download_latest():
 
 if __name__ == "__main__":
     app.run()
+    
