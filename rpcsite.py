@@ -1,11 +1,13 @@
 from random import choice
 import os
+import hashlib
+from functools import partial
 
 from flask import Flask, abort, jsonify, render_template, send_file, request
 
 app = Flask(__name__)
 
-CLIENT_VERSION = 2.2
+CLIENT_VERSION = 2.31
 
 RANDOM_IMAGE_POOL = os.listdir("static/img/showcases/")
 
@@ -345,7 +347,17 @@ registry_dict_v2 = {
         },
         {
             "id": 949,
-            "name": "Swampland"
+            "name": "Swampland",
+            "bosses": [
+                {
+                    "name": "Bloomhunger",
+                    "coord": [
+                        -4622,
+                        -5250
+                    ],
+                    "radius": 2445
+                }
+            ]
         },
         {
             "id": 950,
@@ -381,11 +393,31 @@ registry_dict_v2 = {
         },
         {
             "id": 958,
-            "name": "Solid Ocean"
+            "name": "Solid Ocean",
+            "bosses": [
+                {
+                    "name": "Jade Maw",
+                    "coord": [
+                        30124,
+                        31762
+                    ],
+                    "radius": 1969
+                }
+            ]
         },
         {
             "id": 959,
-            "name": "Molten Boss"
+            "name": "Molten Boss",
+            "bosses": [
+                {
+                    "name": "Berserker and Firestorm",
+                    "coord": [
+                        5493.12,
+                        -4471.18
+                    ],
+                    "radius": 1266
+                }
+            ]
         },
         {
             "id": 960,
@@ -465,7 +497,33 @@ registry_dict_v2 = {
         },
         {
             "id": 1290,
-            "name": "Deepstone"
+            "name": "Deepstone",
+            "bosses": [
+                {
+                    "name": "Brood Queen",
+                    "coord": [
+                        8534,
+                        -4505
+                    ],
+                    "radius": 1031
+                },
+                {
+                    "name": "Deepstone Sentinel",
+                    "coord": [
+                        -2634,
+                        168
+                    ],
+                    "radius": 1014
+                },
+                {
+                    "name": "The Voice",
+                    "coord": [
+                        700,
+                        12184
+                    ],
+                    "radius": 2588
+                }
+            ]
         },
         {
             "id": 1384,
@@ -483,7 +541,25 @@ registry_dict_v2 = {
         },
         {
             "id": 1309,
-            "name": "Siren's Reef"
+            "name": "Siren's Reef",
+            "bosses": [
+                {
+                    "name": "Blasting Black Peter",
+                    "coord": [
+                        4136.4,
+                        12539.9
+                    ],
+                    "radius": 1726
+                },
+                {
+                    "name": "Arabella Crowe",
+                    "coord": [
+                        -6757.73,
+                        3787.74
+                    ],
+                    "radius": 4437
+                }
+            ]
         }
     ],
     "raids": {
@@ -946,7 +1022,12 @@ registry_dict_v2 = {
         "1344": "strike_sanctum_arena",
         "1346": "strike_sanctum_arena",
         "1357": "strike_jormag",
-        "1359": "strike_jormag"
+        "1359": "strike_jormag",
+        "1374": "strike_cold_war",
+        "1376": "strike_cold_war",
+        "1409": "dragonstorm",
+        "1410": "dragonstorm",
+        "1411": "dragonstorm"
     },
     "mounts": {
         1: "jackal",
@@ -1092,22 +1173,33 @@ def support_v2():
 @app.route('/')
 def home():
     image_path = "static/img/showcases/" + choice(RANDOM_IMAGE_POOL)
-    return render_template('index.html', random_image=image_path)
+    try:
+        md5_sum = md5sum("downloads/gw2rpc.zip")
+    except FileNotFoundError:
+        md5_sum = ""
+    return render_template('index.html', random_image=image_path, md5_sum=md5_sum)
 
 @app.route('/copy-paste')
 def copy_paste():
     chat_code = request.args.get('chat_code', type = str)
     name = request.args.get('name', type = str)
-    return render_template('copy_paste.html', chat_code=chat_code, name=name)
+    character = request.args.get('character', type = str)
+    return render_template('copy_paste.html', chat_code=chat_code, name=name, character=character)
 
 @app.route('/download/latest')
 def download_latest():
-    path = "downloads/gw2rpc.7z"
+    path = "downloads/gw2rpc.zip"
     try:
         return send_file(path, as_attachment=True)
     except:
         return abort(400)
 
+def md5sum(filename):
+    with open(filename, mode='rb') as f:
+        d = hashlib.md5()
+        for buf in iter(partial(f.read, 128), b''):
+            d.update(buf)
+    return d.hexdigest()
 
 if __name__ == "__main__":
     app.run()
